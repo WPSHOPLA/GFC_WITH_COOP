@@ -212,9 +212,5 @@
 
 </div>
 </div>
-
-<?php
-echo $document->renderJs();
-?>
 </body>
 </html>

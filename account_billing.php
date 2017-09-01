@@ -268,7 +268,7 @@ include('templates/default/header.php');
                                         <textarea rows="3" name="feedback" id="feedback_area"
                                                   title="feedback"></textarea>
                                         <button class="btn pri_button" id="feedback_bt">Send Feedback</button>
-                                        <a href="subscription_create.php" class="btn pri_button">Reactivate
+                                        <a href="subscription_update.php" class="btn pri_button">Reactivate
                                             Subscription</a>
                                     </div>
                                 </div>
@@ -288,7 +288,7 @@ include('templates/default/header.php');
                                 <br>
                                 <br>
 
-                                <a href="subscription_create.php" class="btn pri_button pull-left">Reactivate
+                                <a href="subscription_update.php" class="btn pri_button pull-left">Reactivate
                                     Subscription</a>
 
                             <?php }

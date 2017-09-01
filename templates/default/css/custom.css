@@ -397,6 +397,10 @@ input[type=checkbox].sub_check {
     padding: 10px;
 }
 
+.user_table th:last-child{
+    min-width: 100px;
+}
+
 .user_table td {
     min-width: 50px;
     padding: 5px 10px;

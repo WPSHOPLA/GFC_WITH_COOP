@@ -382,6 +382,19 @@ class paymentClass
         }
     }
 
+    public function delete_customer($the_customer_id)
+    {
+
+        $resp = $this->API->delete(ChargeOverAPI_Object::TYPE_CUSTOMER, $the_customer_id);
+
+        // Check for errors
+        if (!$this->API->isError($resp)) {
+            return (object)array('status' => 'success');
+        } else {
+            return (object)array('status' => 'error', 'message' => $resp->message);
+        }
+
+    }
 }
 
 ?>

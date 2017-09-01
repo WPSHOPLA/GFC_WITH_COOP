@@ -106,10 +106,10 @@ function isSubscribed()
             return true;
         }
     }
-
     return false;
-
 }
+
+
 
 function requireSubscription()
 {

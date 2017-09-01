@@ -10,9 +10,9 @@ $uid = $session_uid;
 
 if ($userDetails->sub_status == "c") {
 
-    $url = BASE_URL . 'subscription_create.php';
-    header("Location: $url");
-    exit();
+//    $url = BASE_URL . 'subscription_create.php';
+//    header("Location: $url");
+//    exit();
 }
 
 $states = $mainClass->getStates();
@@ -605,7 +605,7 @@ include('templates/default/header.php');
             'token': 'OXq2eAhT8V3bNr0QpGlWLUmI5JtnFc1z'
         });
 
-        
+
         //setInterval(updateSummary, 1000);
         function validateTeamSize() {
             if ($('[name=extra_users]').val() > 100)

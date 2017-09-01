@@ -27,7 +27,6 @@ class userClass
         } catch (PDOException $e) {
             echo '{"error":{"text":' . $e->getMessage() . '}}';
         }
-
     }
 
     /* User Registration */
@@ -917,6 +916,21 @@ class userClass
 
         } catch (PDOException $e) {
             echo '{"error":{"text":' . $e->getMessage() . '}}';
+        }
+    }
+
+    public function remove_user($uid)
+    {
+        try {
+            $db = getDB();
+            $stmt = $db->prepare("DELETE FROM users WHERE id=:uid");
+            $stmt->bindParam("uid", $uid, PDO::PARAM_INT);
+            $stmt->execute();
+            $db = null;
+            return true;
+
+        } catch (PDOException $e) {
+            return $e->getMessage();
         }
     }
 

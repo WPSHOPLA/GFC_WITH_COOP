@@ -182,6 +182,53 @@ if (!empty($_GET['action'])) {
             echo 'success';
         }
 
+    } else if ($action == "remove_user") {
+
+        $user_id = $_GET['user_id'];
+        $customer_id = $_GET['customer_id'];
+
+        //delete card info
+        $cards = $paymentClass->getCardByCustomerId($customer_id)->card;
+
+        if (count($cards) > 0) {
+            $card = $cards[0];
+            $card_id = $card->creditcard_id;
+            if ($card_id) {
+                $card_result = $paymentClass->deleteCard($card_id);
+                if ($card_result->status == "error") {
+                    echo "Failed From Deleting Card Info";
+                    return;
+                }
+            }
+        }
+
+        //delete subscription info
+        $uDetails = $userClass->userDetails($user_id);
+        $package_id = $uDetails->sub_id;
+
+        if ($package_id) {
+            $sub_result = $paymentClass->cancelSubscription($package_id);
+            if ($sub_result->status == "error") {
+
+                //echo "Failed From Cancel Subscription: " . $sub_result->message;
+                //return;
+            }
+        }
+
+        //delete user from CO
+        $user_result = $paymentClass->delete_customer($customer_id);
+        if ($user_result->status == "error") {
+            //echo "Failed to remove user on ChargeOver" . $user_result->message;
+            //return;
+        }
+
+        //remove from table
+        $result = $userClass->remove_user($user_id);
+        if ($result == true) {
+            echo 'success';
+        } else {
+            echo $result;
+        }
     }
 }
 

@@ -28,47 +28,6 @@ foreach ($questionClass->countQuestionsByState($conditionArray) as $counter) {
 	$countByStateArray[$counter['state_id']] = $counter['count'];
 }
 
-if ($filter_keyword) {
-    // register the rating.
-    $rating = \GoFetchCode\Search\Rating::findBySearchString($userDetails->id, $filter_keyword);
-
-    $document->addStyle("templates/default/css/star-rating.min.css");
-    $document->addStyle("templates/default/themes/krajee-fa/theme.min.css");
-
-    $document->addScript("templates/default/js/star-rating.min.js");
-    $document->addScript("templates/default/themes/krajee-fa/theme.min.js");
-
-    $document->addScriptDeclaration(
-<<<JS
-$(function() {
-    $('#stars').on('rating.change', function(event, value, caption) {
-        if (value) {
-            var q = document.forms['search'].elements["keyword"];
-            
-            if (q.value) {
-                var post = {
-                    'search_string' : q.value,
-                    'rating' : value
-                };
-
-                $.ajax({
-                    url  : "api/rate.php",
-                    type : 'POST',
-                    data : post,
-                    success: function (response) {
-                        if (response) {
-                            $("#rating > label").text("Thanks for rating");                            
-                        }
-                    }
-                });
-            }
-        }
-    });
-});
-JS
-);
-}
-
 include('templates/default/header.php');
 ?>
 <div class="container-fluid content">
@@ -560,33 +519,10 @@ echo 					'<div class="mobile-sketcher-changer"><span>&lt;</span><a href="javasc
 					</ul>
 				  </div>';  
 		}
-        ?>
-        
-        <?php if (isset($rating)) : ?>
-        <div class="col-md-3 col-sm-3">
-            <div id="rating">
-                <label 
-                    for="rating" 
-                    class="control-label">Please, rate your search</label>
-
-                <input 
-                    id="stars" 
-                    name="stars" 
-                    class="rating rating-loading" 
-                    data-min="0" 
-                    data-max="5" 
-                    data-step="1" 
-                    data-show-clear="false" 
-                    data-show-caption="false" 
-                    data-size="xs"
-                    value="<?php echo $rating->rating; ?>">
-            </div>
-        </div>
-        <?php endif; ?>
-        
-        <?php
 		
 		if(sizeof($answers) > 0) {
+			//echo 					'<div class="col-md-3 col-sm-3"></div>';
+			echo 					'<div class="col-md-3 col-sm-3"></div>';
 			echo 					'<div class="col-md-2 col-sm-2">';
 			echo 						'<button class="btn btn-default btn-xs btn-prev-result" disabled>Previous</button>';
 			echo						'&nbsp;&nbsp;&nbsp;';

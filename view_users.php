@@ -307,6 +307,11 @@ include('templates/default/header.php');
                                                 <i class="fa fa-user"></i>
                                             </button>
                                         <?php } ?>
+                                        <button class="action remove_user" title="Remove"
+                                                data-coid="<?php echo $user['co_customer_id']; ?>"
+                                                data-uid="<?php echo $user['id']; ?>">
+                                            <i class="fa fa-remove"></i>
+                                        </button>
                                     </td>
                                 </tr>
                                 <?php
@@ -370,6 +375,38 @@ include('templates/default/header.php');
 
         $(document).ready(function () {
 
+
+            $('#usertable').on('click', '.remove_user', function () {
+
+                if (loading) {
+                    alert('Please wait until Syncing Subscription Info would be finished.');
+                    return;
+                }
+
+                var user_id = $(this).data('uid');
+                var customer_id = $(this).data('coid');
+                var data = "user_id=" + user_id + "&customer_id=" + customer_id + "&action=remove_user";
+
+                $.ajax({
+                    url: 'manage_users.php',
+                    type: 'GET',
+                    data: data,
+                    success: function (response) {
+                        console.log(response);
+
+                        if (response == "success") {
+                            //alert('State Removed');
+                            window.location.reload();
+                        } else {
+                            alert(response);
+                        }
+                    },
+                    error: function () {
+                        alert("While Removing Users, Error Occurred, Please try again later.");
+                    }
+                })
+            });
+
             $('#usertable').on('click', '.sync_user', function () {
 
                 if (loading) {
@@ -384,7 +421,7 @@ include('templates/default/header.php');
 
                 $.ajax({
                     url: 'manage_users.php',
-                    type: 'POST',
+                    type: 'GET',
                     data: data,
                     success: function (response) {
                         console.log(response);
@@ -465,6 +502,8 @@ include('templates/default/header.php');
 
             //datatable
             $('#usertable').datatable({
+                scrollX: true,
+                scrollCollapse: true,
                 pageSize: 20,
                 sort: [true, true, false, false, true, false, false, false, false, false, false],
                 filters: [false, true, true, 'select', true, false, false, false, false, false, 'select'],
