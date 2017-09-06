@@ -31,11 +31,8 @@ $searchClass = new searchClass();
 $paymentClass = new paymentClass();
 $logClass = new logClass();
 
-$document = new \GoFetchCode\Html\Document;
-
 if (isLoggedIn())
     loadUserDetails();
-
 
 /*----------------------------*/
 

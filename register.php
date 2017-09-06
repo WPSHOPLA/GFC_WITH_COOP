@@ -79,7 +79,9 @@ include('templates/default/header.php');
 
                         <div class="form-group">
                             <input type="text" name="username" value=""
-                                   pattern="[A-Za-z\s0-9]{6,}"
+                                   pattern="[A-Za-z0-9]{6,255}"
+                                   title="Only uppercase, lowercase letters and digits are allowed."
+                                   minlength="6" maxlength="255"
                                    class="form-control" placeholder="Username" required>
                         </div>
 
@@ -114,9 +116,16 @@ include('templates/default/header.php');
 
                         <div class="form-group">
                             <input type="text" name="phone" value="" class="form-control"
-                                   pattern="\(?\d{3}\)?\s?[\-]?\d{3}[\-]?\d{4}"
-                                   title="(ddd) ddd dddd or ddd-ddd-ddddd"
+                                   pattern="^\+?[0-9]\d{1,14}$"
+                                   minlength="7" maxlength="15"
+                                   title="Please input your valid phone number as E164 Format."
                                    placeholder="Phone" required>
+                            <!--
+                            //Pattern
+                            //Origin: \(?\d{3}\)?\s?[\-]?\d{3}[\-]?\d{4} -- (ddd) ddd-dddd, (ddd) ddd dddd, ddd-ddd-dddd
+                            //Common Format: ^\+(?:[0-9]\x20?){6,14}[0-9]$
+                            //EPP FORMAT: ^\+[0-9]{1,3}\.[0-9]{4,14}(?:x.+)?$
+                            -->
                         </div>
 
                         <div class="form-group">
@@ -173,6 +182,16 @@ include('templates/default/header.php');
     </div>
 
     <script>
+
+        //read temporary email list
+        var temp_domains = [];
+
+        $.getJSON("templates/default/file/temporary_emails.json", function (data) {
+            $.each(data, function (key, val) {
+                temp_domains.push(val);
+            });
+        });
+
         $('#agree').change(function () {
 
             var checked = $(this).prop('checked');
@@ -235,12 +254,10 @@ include('templates/default/header.php');
             var email = $(email_obj).val();
             var email_subfix = email.split('@');
             email_subfix = email_subfix[1];
-
+            var post = $.inArray(email_subfix, temp_domains);
             //check personal email
-            if (email_subfix == 'outlook.com' || email_subfix == 'gmail.com' || email_subfix == 'yahoo.com' || email_subfix == 'hotmail.com'
-                || email_subfix == 'aol.com') {
-
-                show_error_msg('Please input your valid Business Email, not Personal Email.');
+            if (post >= 0) {
+                show_error_msg('Please provide a valid business email.');
                 $(email_obj).focus();
                 return false;
             }

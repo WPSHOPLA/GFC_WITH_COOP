@@ -677,7 +677,7 @@ include('templates/default/header.php');
                         updateSummary();
 
                     } else {
-                        alert('Thank you for your interest in GofetchCode building Codes. Currently we do not have building codes for ' + checked_location + '. We will email you once these codes are available. Stay tuned!');
+                        alert('Thank you for your interest in GofetchCode Building Code. Currently we do not have building codes for ' + checked_location + '. We will email you once these codes are available. Stay tuned!');
                         $('#location_select').multiselect('deselect', opt_val);
 
                     }
@@ -743,7 +743,7 @@ include('templates/default/header.php');
                 expdate_year: year,
                 name: card_holder,
                 // CVV/CSC card security code (used only for card validation, not stored)
-                cvv: card_csc,
+                cvv: card_csc
                 // Optional address information (can be used for address verification)
                 address: addr,
                 city: city,

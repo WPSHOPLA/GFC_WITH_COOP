@@ -28,8 +28,8 @@
     <link rel="stylesheet" href="templates/default/css/custom.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
     <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
@@ -81,9 +81,10 @@
 
                 });
             });
+
             $('body').bind('copy cut paste', function (e) {
-                if (e.target.name != 'keyword') {
-                    console.log('dont copy man');
+                if (e.target.localName != 'input') {
+                    console.log('Cut, Copy and Paste are not allowed');
                     e.preventDefault();
                 }
             });
@@ -267,7 +268,8 @@
                                         <li class="ng-scope"><a
                                                 href="<?php echo BASE_URL . 'view_users.php'; ?>">Users</a>
                                         </li>
-                                        <li class="ng-scope"><a href="<?php echo BASE_URL . 'view_plans.php'; ?>">Plans</a>
+                                        <li class="ng-scope"><a
+                                                href="<?php echo BASE_URL . 'view_plans.php'; ?>">Plans</a>
                                         </li>
                                     </ul>
                                 <?php } ?>
@@ -318,12 +320,13 @@
                                                                                             aria-hidden="true"></i>&nbsp;&nbsp;Account<span
                                         class="caret"></span></a>
                                 <ul class="list-unstyle cbc-chapters-list collapse">
-                                    <li class="ng-scope"><a href="<?php echo BASE_URL . 'account_settings.php'; ?>">Account
-                                            Settings</a></li>
-                                    <li class="ng-scope"><a href="<?php echo BASE_URL . 'account_billing.php'; ?>">Billing</a>
+                                    <li class="ng-scope"><a href="<?php echo BASE_URL . 'account_settings.php'; ?>">Settings</a>
                                     </li>
-                                    <li class="ng-scope"><a href="<?php echo BASE_URL . 'account_team.php'; ?>">Team</a>
-                                    </li>
+                                    <?php if (!isSubAccount()) { ?>
+                                        <li class="ng-scope"><a href="<?php echo BASE_URL . 'account_billing.php'; ?>">Subscription</a>
+                                        </li>
+                                    <?php } ?>
+                                    <li class="ng-scope"><a href="<?php echo BASE_URL . 'account_team.php'; ?>">Team</a></li>
                                 </ul>
                             </li>
                             <li>
