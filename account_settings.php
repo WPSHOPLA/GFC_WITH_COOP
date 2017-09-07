@@ -2,6 +2,8 @@
 require('lib/init.php');
 requireLogin();
 
+global $userClass, $session_uid, $mainClass, $userDetails;
+
 $errorMsgPassword = '';
 $errorMsgPassword2 = '';
 $errorMsgEmail = '';
@@ -46,6 +48,9 @@ if (!empty($_POST['update_info_submit'])) {
     }
 }
 
+//Team Owner, Team Member, Staff
+$user_type=($userDetails->owner_id > -1) ? "Team Member" : "Team Owner";
+
 include('templates/default/header.php');
 ?>
     <div class="container-fluid content">
@@ -56,8 +61,9 @@ include('templates/default/header.php');
 
                     <div class="h1 text-blue">Account Settings</div>
 
+                    <label class="h4 text-blue">User Type: <?php echo $user_type;?></label>
+
                     <form name="form" method="post">
-                        <div class="h4 text-blue">Info</div>
 
                         <label>Email</label>
                         <div class="form-group<?php if ($errorMsgEmail != '') echo ' has-error'; ?>">

@@ -152,13 +152,7 @@ if (!empty($_GET['action'])) {
 
         //if($username_check && $email_check && $password_check && $password == $password_2 && $extra_users_check && $locations_check) {
 
-        if (!$invite_code) {
-            //$userRegistration = $userClass->userRegistration($username, $password, $email, $extra_users, '');
-            $userRegistration = $userClass->userRegistration($username, $password, $email, $first_name, $last_name, '', $phone, $organization);
-        } else {
-            //$userRegistration = $userClass->userRegistration($username, $password, $email, $extra_users, $invite_code);
-            $userRegistration = $userClass->userRegistration($username, $password, $email, $first_name, $last_name, $invite_code, $phone, $organization);
-        }
+        $userRegistration = $userClass->userRegistration($username, $password, $email, $first_name, $last_name, $invite_code, $phone, $organization);
 
         if ($userRegistration === 'INVALID_EMAIL_ADDRESS') {
             $err_msg = 'Email is Invalid. Please use Valid Email.';

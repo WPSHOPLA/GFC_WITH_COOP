@@ -11,7 +11,6 @@
 
 include('lib/config.php');
 include('lib/session.php');
-include "lib/vendor/autoload.php";
 
 include('lib/classes/mailClass.php');
 include('lib/classes/mainClass.php');
@@ -88,24 +87,38 @@ function isSubscribed()
         return false;
     }
 
-    if ($userDetails->sub_status == "a") {
-        if ($userDetails->used_trial == 0) {
-            $dateNow = date('Y-m-d H:i:s');
-            $timeStampNow = strtotime($dateNow);
+    $dateNow = date('Y-m-d H:i:s');
+    $timeStampNow = strtotime($dateNow);
 
-            if ($userDetails->owner_id > 0)
-                $timeStampUntil = strtotime($userClass->userDetails($userDetails->owner_id)->co_subscribed_until);
-            else
+    if ($userDetails->owner_id == -1) {
+        if ($userDetails->sub_status == "a") {
+            if ($userDetails->used_trial == 0) {
                 $timeStampUntil = strtotime($userDetails->co_subscribed_until);
+                return $timeStampUntil > $timeStampNow;
+            } else {
+                return true;
+            }
+        }
+    } else {
+        //team member: check team owner
+        $team_owner_details = $userClass->userDetails($userDetails->owner_id);
 
-            return $timeStampUntil > $timeStampNow;
-        } else {
+        //if team owner is staff then subscribed!
+        if ($team_owner_details->access == '100') {
             return true;
         }
+
+        if ($team_owner_details->sub_status == "a") {
+
+            $timeStampUntil = strtotime($team_owner_details->co_subscribed_until);
+            return $timeStampUntil > $timeStampNow;
+        }
+
+        return false;
     }
+
     return false;
 }
-
 
 
 function requireSubscription()
@@ -157,10 +170,6 @@ function isStaff()
 
     if (!isLoggedIn())
         return false;
-
-    if (isSubAccount())
-        return $userClass->userDetails($userDetails->owner_id)->access == 100;
-
     return $userDetails->access == 100;
 }
 
@@ -187,7 +196,7 @@ function requireNotSubAccount()
 {
     requireLogin();
     if (isSubAccount()) {
-        $url = BASE_URL . 'index.php';
+        $url = BASE_URL . 'account_settings.php';
         header("Location: $url");
         exit();
     }

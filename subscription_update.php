@@ -1,19 +1,12 @@
 <?php
 require('lib/init.php');
-requireLogin();
+requireNotSubAccount();
 
 global $userClass, $session_uid, $userDetails, $mainClass, $paymentClass;
 
 $uid = $session_uid;
 
 //suspended, expired, active -- cancelled
-
-if ($userDetails->sub_status == "c") {
-
-//    $url = BASE_URL . 'subscription_create.php';
-//    header("Location: $url");
-//    exit();
-}
 
 $states = $mainClass->getStates();
 $cur_month = date('n');
@@ -743,7 +736,7 @@ include('templates/default/header.php');
                 expdate_year: year,
                 name: card_holder,
                 // CVV/CSC card security code (used only for card validation, not stored)
-                cvv: card_csc
+                cvv: card_csc,
                 // Optional address information (can be used for address verification)
                 address: addr,
                 city: city,

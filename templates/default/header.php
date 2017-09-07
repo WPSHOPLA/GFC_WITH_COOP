@@ -325,8 +325,10 @@
                                     <?php if (!isSubAccount()) { ?>
                                         <li class="ng-scope"><a href="<?php echo BASE_URL . 'account_billing.php'; ?>">Subscription</a>
                                         </li>
+                                        <li class="ng-scope"><a
+                                                href="<?php echo BASE_URL . 'account_team.php'; ?>">Team</a></li>
                                     <?php } ?>
-                                    <li class="ng-scope"><a href="<?php echo BASE_URL . 'account_team.php'; ?>">Team</a></li>
+
                                 </ul>
                             </li>
                             <li>

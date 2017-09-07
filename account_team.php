@@ -2,6 +2,9 @@
 require('lib/init.php');
 requireNotSubAccount();
 
+global $userClass, $mainClass;
+global $session_uid;
+
 $invites_info = $userClass->getInvitesInfo($session_uid);
 
 $errorMsgPassword = '';
@@ -15,16 +18,12 @@ if (!empty($_POST['invite_email_submit'])) {
 	$first_name = $_POST['first_name'];
 	$last_name = $_POST['last_name'];
 	
-	$email_check = preg_match('~^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$~i', $email);
 	$invites_check = $invites_info->invites_count > 0;
 	
 	if(!$invites_check)
-		$notifyMsgUpdate = $mainClass->alert('error', 'You cannot invite users as it has reached your team size limit. Do you want to upgrade your account?');
+		$notifyMsgUpdate = $mainClass->alert('error', 'You cannot invite users as it has reached your team size limit. Do you want to upgrade your account? Please update your subscription.');
 	
-	if(!$email_check)
-		$errorMsgEmail = 'Invalid Email.';
-	
-	if($email_check && $invites_check) {		
+	if($invites_check) {
 		$inviteUser = $userClass->inviteUser($session_uid, $email, $first_name, $last_name);
 		if ($inviteUser) {
 			if($inviteUser === 'EMAIL_ALREADY_EXISTS') {
@@ -90,7 +89,9 @@ include('templates/default/header.php');
 					<div class="h4 text-blue">Invite People (<?php echo '<span class="username">' . $invites_info->invites_count . '</span> ' . $invite_text . ' left'; ?>)</div>
 						<div class="form-group<?php if($errorMsgEmail != '') echo ' has-error'; ?>">
 							<?php if($errorMsgEmail != '') echo '<span class="help-block with-errors"><ul class="list-unstyled"><li>' . $errorMsgEmail . '</li></ul></span>'; ?>
-							<input type="email" name="email" class="form-control" placeholder="Email" required>
+							<input type="email" name="email" class="form-control" placeholder="Email"
+								   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+								   required>
 						</div>
 						
 						<div class="row">

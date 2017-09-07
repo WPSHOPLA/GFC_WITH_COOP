@@ -1,8 +1,29 @@
 <?php
-
 require('lib/init.php');
+global $userClass, $mainClass, $paymentClass, $session_uid;
 
-global $userClass, $mainClass, $paymentClass;
+$email = '';
+$first_name = '';
+$last_name = '';
+$invite_info = null;
+
+$invite_code = isset($_GET['invite_code']) ? $_GET['invite_code'] : '';
+$invited = $invite_code != '' ? true : false;
+
+if ($invited) {
+    $invite_info = $userClass->getInviteInfo($invite_code);
+    if ($invite_info) {
+        $email = $invite_info->email;
+        $first_name = $invite_info->first_name;
+        $last_name = $invite_info->last_name;
+    }
+
+    $session_uid = -1;
+
+    session_start();
+    session_unset();
+//    session_destroy();
+}
 
 if (isLoggedIn()) {
     $url = BASE_URL . 'index.php';
@@ -10,30 +31,18 @@ if (isLoggedIn()) {
     exit();
 }
 
-$invite_code = isset($_GET['invite_code']) ? $_GET['invite_code'] : '';
-$invited = $invite_code != '' ? true : false;
-
-if ($invited) {
-    $invite_info = $userClass->getInviteInfo($invite_code);
-
-    $email = $invite_info->email;
-    $first_name = $invite_info->first_name;
-    $last_name = $invite_info->last_name;
-}
-
-
 include('templates/default/header.php');
 ?>
     <div class="container-fluid content form-only-content">
         <div class="main-container">
 
             <?php
-            if ($invited && !$invite_info) {
-                echo '<div class="search-examples"><center><p><b>Invalid invite link</b></p></center></div>';
-            } else {
-                if ($invited && $invite_info) {
+            if ($invited) {
+                if ($invite_info) {
                     $ownerDetails = $userClass->userDetails($invite_info->user_id);
                     echo '<div class="search-examples"><center><p><b>Join ' . $ownerDetails->first_name . ' ' . $ownerDetails->last_name . '\'s team</b></p></center></div>';
+                } else {
+                    echo '<div class="search-examples"><center><p><b>Invalid invite link</b></p></center></div>';
                 }
             }
             ?>
@@ -44,8 +53,7 @@ include('templates/default/header.php');
                     <p class="text-info">
                         GoFetchCode provides answers to your Building Code-related questions in a snap.
                         <br><br>As soon as you fill in the form on this page and subscribe, your free trial account
-                        will
-                        start.
+                        will start.
                         After 7 days, simply subscribe to one of our paid plans and keep using GoFetchCode for
                         your building code needs.
                         <br><br>Register now and get immediate and free access to the GoFetchCode search engine.
@@ -54,8 +62,7 @@ include('templates/default/header.php');
                 <div class="col-lg-4">
 
                     <div id="err_msg" class="text-error"></div>
-                    <form name="form" method="get" id="register_form">
-
+                    <form name="form" method="get" id="register_form" autocomplete="off">
 
                         <input type="hidden" name="action" value="create_user">
                         <input type="hidden" name="invite_code" value="<?php echo $invite_code ?>">
@@ -63,14 +70,14 @@ include('templates/default/header.php');
                         <div class="row">
                             <div class="col-xs-12 col-sm-6">
                                 <div class="form-group">
-                                    <input type="text" name="first_name" value=""
+                                    <input type="text" name="first_name" value="<?php echo $first_name; ?>"
                                            pattern="[A-Za-z\s]{1,}" title="Must contain at least 1 or more characters"
                                            class="form-control" placeholder="First Name" required>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-6">
                                 <div class="form-group">
-                                    <input type="text" name="last_name" value=""
+                                    <input type="text" name="last_name" value="<?php echo $last_name; ?>"
                                            pattern="[A-Za-z\s]{1,}" title="Must contain at least 1 or more characters"
                                            class="form-control" placeholder="Last Name" required>
                                 </div>
@@ -109,8 +116,9 @@ include('templates/default/header.php');
                                    class="form-control" placeholder="Business URL" required>
                         </div>
                         <div class="form-group">
-                            <input type="email" name="email" id="email" value=""
+                            <input type="email" name="email" id="email" value="<?php echo $email; ?>"
                                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+                                   autocomplete="false"
                                    class="form-control" placeholder="Business Email" required>
                         </div>
 

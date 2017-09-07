@@ -1,6 +1,6 @@
 <?php
 require('lib/init.php');
-requireLogin();
+requireNotSubAccount();
 
 if (is_exist_Subscribed()) {
     $url = BASE_URL . 'search.php';
@@ -685,7 +685,7 @@ $last_year = $cur_year + 10;
                 expdate_year: year,
                 name: card_holder,
                 // CVV/CSC card security code (used only for card validation, not stored)
-                cvv: card_csc
+                cvv: card_csc,
                 // Optional address information (can be used for address verification)
                 address: addr,
                 city: city,

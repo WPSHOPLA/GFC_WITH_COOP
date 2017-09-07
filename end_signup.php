@@ -25,7 +25,7 @@ include('templates/default/header.php');
                     </p>
 
                     <p class="text-center">
-                        <a class="btn pri_button" href="subscription_create.php">Go to Subscribe</a>
+                        <a class="btn pri_button" href="login.php">Login</a>
                     </p>
                 </div>
             </div>

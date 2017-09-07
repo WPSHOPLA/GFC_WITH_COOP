@@ -34,23 +34,14 @@ class userClass
     public function userRegistration($username, $password, $email, $first_name, $last_name, $invite_code, $phone, $organization)
     {
         try {
-            global $paymentClass, $mailClass;
+            global $mailClass;
+
             $db = getDB();
             $invited = $invite_code != '' ? true : false;
             $invited_by = 0;
             $invited_by_data = null;
 
-            //check valid email address
-            $invalid = false;
-            $invalid_email_address_list = ['@gmail.com', '@hotmail.com', '@yahoo.com', '@aol.com'];
-
-            if (in_array($email, $invalid_email_address_list)) {
-                $invalid = true;
-            }
-
-            if ($invalid) {
-                return 'INVALID_EMAIL_ADDRESS';
-            }
+            $call_email = null;
 
             if ($invited) {
                 $st = $db->prepare("SELECT * FROM user_invites WHERE invite_code=:invite_code");
@@ -64,7 +55,12 @@ class userClass
                     return 'INVALID_INVITE_CODE';
                 } else {
                     $invited_by = $data->user_id;
-                    $invited_by_data = $data;
+
+                    $st = $db->prepare("SELECT email FROM users WHERE id=:call_uid");
+                    $st->bindParam("call_uid", $invited_by, PDO::PARAM_INT);
+                    $st->execute();
+                    $data = $st->fetch(PDO::FETCH_OBJ);
+                    $call_email = $data->email;
                 }
             }
 
@@ -111,18 +107,7 @@ class userClass
             $stmt->execute();
             $uid = $db->lastInsertId('users_id_seq'); // Last inserted row id
 
-            if (!$invited) {
-                //include ROOT_DIR . '/lib/classes/paymentClass.php';
-                //$paymentClass = new paymentClass();
-                //$co_customer_id = $paymentClass->createCustomer($uid, $username, $first_name, $last_name, $email, $phone, $organization);
-
-//                if ($co_customer_id != -1) {
-//                    $stmtt = $db->prepare("UPDATE users SET co_customer_id=:co_customer_id WHERE id=:id");
-//                    $stmtt->bindParam("co_customer_id", $co_customer_id, PDO::PARAM_INT);
-//                    $stmtt->bindParam("id", $uid, PDO::PARAM_INT);
-//                    $stmtt->execute();
-//                }
-            } else {
+            if ($invited) {
                 $st = $db->prepare("DELETE FROM user_invites WHERE user_id=:invited_by AND invite_code=:invite_code");
                 $st->bindParam("invite_code", $invite_code, PDO::PARAM_STR);
                 $st->bindParam("invited_by", $invited_by, PDO::PARAM_STR);
@@ -130,6 +115,7 @@ class userClass
             }
 
             $db = null;
+
             $_SESSION['uid'] = $uid;
 
             if ($_SERVER['HTTP_HOST'] != "localhost") {
@@ -152,11 +138,11 @@ class userClass
 
                 $mailClass->sendMail($email, $mail_subject, $mail_content, $mail_content_html);
 
-                if ($invited) {
-                    $mail_subject = $email . ' has joined your team';
-                    $mail_content = $email . ' accepted your invitation to the team.';
-                    $mail_content_html = $email . ' accepted your invitation to the team.';
-                    $mailClass->sendMail($invited_by_data->email, $mail_subject, $mail_content, $mail_content_html);
+                if ($invited && $call_email) {
+                    $mail_subject = $first_name . ' has joined your team';
+                    $mail_content = $first_name . ' accepted your invitation to the team.';
+                    $mail_content_html = $first_name . ' accepted your invitation to the team.';
+                    $mailClass->sendMail($call_email, $mail_subject, $mail_content, $mail_content_html);
                 }
             }
 
